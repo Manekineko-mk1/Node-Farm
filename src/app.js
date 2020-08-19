@@ -55,12 +55,14 @@ const replaceTemplate = (template, product) => {
 
 // SERVER SETUP
 const server = http.createServer((req, res) => {
-    const pathName = req.url;
+    // console.log(req.url);                   // Returns everything after the hostname:port
+    // console.log(url.parse(req.url, true));  // Parse the query string into an object
+    const {query, pathname} = url.parse(req.url, true);     // Extracts the value of 'query' and 'pathname' and turn them into variables
     
     // Routing conditions - START
     
     // 1. Overview Page Route
-    if(pathName === '/' || pathName === '/overview') {
+    if(pathname === '/' || pathname === '/overview') {
         res.writeHead(200, {'Content-type': 'text/html'});
         
         // The last join will make turn the array into a string.
@@ -71,11 +73,15 @@ const server = http.createServer((req, res) => {
         
         res.end(output);
     }
-    else if (pathName === '/product') {
+    else if (pathname === '/product') {
         // 2. Product Page Route
-        res.end('This is the PRODUCT page!');
+        res.writeHead(200, {'Content-type': 'text/html'});
+        const productByID = productDataObject[query.id];                // Extracts the JSON by query.ID
+        const output = replaceTemplate(templateProduct, productByID);   // Replace the templateProduct card using the JSON object;
+        
+        res.end(output);
     }
-    else if (pathName === '/api') {  
+    else if (pathname === '/api') {  
         // 3. API Route
         res.writeHead(200, {'Content-type': 'application/json'});
         res.end(data);                            
