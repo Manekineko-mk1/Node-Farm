@@ -11,10 +11,10 @@ const path = require('path');
 
 // 1. Read JSON Data File
 const getProductJSONPath = process.cwd() + '/dev-data/data.json';
-const data = fs.readFileSync(getProductJSONPath, 'utf-8', (err, data) => {
+const productsJSONObj = fs.readFileSync(getProductJSONPath, 'utf-8', (err, data) => {
     if(err) return console.log('ERROR! 💢💢💢 Product JSON file not found!');  
 });
-const productDataObject = JSON.parse(data);
+const productDataObject = JSON.parse(productsJSONObj);
 
 // 2. Read static templates
 const getTemplateOverviewPath = `${__dirname}/template-overview.html`;
@@ -32,6 +32,25 @@ const templateCard = fs.readFileSync(getTemplateCardPath, 'utf-8', (err, data) =
     if(err) return console.log('ERROR! 💢💢💢 template-card.html JSON file not found!');  
 });
 
+// 3. replaceTemplate function
+const replaceTemplate = (template, product) => {
+    // Use regular expression to replace ALL instances of {%PRODUCT_NAME%} (global /g) with product.productName
+    let output = template.replace(/{%PRODUCT_NAME%}/g, product.productName);
+    output = output.replace(/{%PRODUCT_IMAGE%}/g, product.image);
+    output = output.replace(/{%PRODUCT_FROM%}/g, product.from);
+    output = output.replace(/{%PRODUCT_NUTRIENTS%}/g, product.nutrients);
+    output = output.replace(/{%PRODUCT_QUANTITY%}/g, product.quantity);
+    output = output.replace(/{%PRODUCT_PRICE%}/g, product.price);
+    output = output.replace(/{%PRODUCT_DESCRIPTION%}/g, product.description);
+    output = output.replace(/{%PRODUCT_ID%}/g, product.id);
+
+    if(!product.organic) {
+        output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
+    }
+
+    return output;
+};
+
 // END TOP-LEVEL CODE
 
 // SERVER SETUP
@@ -43,7 +62,14 @@ const server = http.createServer((req, res) => {
     // 1. Overview Page Route
     if(pathName === '/' || pathName === '/overview') {
         res.writeHead(200, {'Content-type': 'text/html'});
-        res.end(templateOverview);
+        
+        // The last join will make turn the array into a string.
+        const cardsHTML = productDataObject.map(element => replaceTemplate(templateCard, element)).join('');
+        
+        // Replace templateOverview placeholder {%PRODUCT_CARDS%} with cardsHTML
+        const output = templateOverview.replace('{%PRODUCT_CARDS%}', cardsHTML);
+        
+        res.end(output);
     }
     else if (pathName === '/product') {
         // 2. Product Page Route
@@ -55,7 +81,7 @@ const server = http.createServer((req, res) => {
         res.end(data);                            
     }
     else {
-        // 4. 404 Page Route
+        // 4. 404 Not Found Route
         res.writeHead(404, {
             'Content-type': 'text/html'
         });
