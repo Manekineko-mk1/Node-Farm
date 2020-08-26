@@ -5,7 +5,7 @@
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
-const path = require('path');
+const slugify = require('slugify');
 
 // Top-level code: Execute only once (So synchronious code is okay)
 
@@ -51,12 +51,18 @@ const replaceTemplate = (template, product) => {
     return output;
 };
 
+// Create slugs for slugify module to replace product ID
+const slugs = productDataObject.map(el => slugify(el.productName, {lower: true}));
+console.log(slugs);
+
 // END TOP-LEVEL CODE
+
+
 
 // SERVER SETUP
 const server = http.createServer((req, res) => {
-    // console.log(req.url);                   // Returns everything after the hostname:port
-    // console.log(url.parse(req.url, true));  // Parse the query string into an object
+    // console.log(req.url);                                // Returns everything after the hostname:port
+    // console.log(url.parse(req.url, true));               // Parse the query string into an object
     const {query, pathname} = url.parse(req.url, true);     // Extracts the value of 'query' and 'pathname' and turn them into variables
     
     // Routing conditions - START

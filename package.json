@@ -4,7 +4,7 @@
   "description": "A Node.js learning project using core Node.js concepts such as routes.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon src/app.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +26,11 @@
   "bugs": {
     "url": "https://github.com/JesseTsang/Node-Farm/issues"
   },
-  "homepage": "https://github.com/JesseTsang/Node-Farm#readme"
+  "homepage": "https://github.com/JesseTsang/Node-Farm#readme",
+  "dependencies": {
+    "slugify": "^1.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
 }
