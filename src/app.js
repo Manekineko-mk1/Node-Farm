@@ -11,51 +11,26 @@ const slugify = require('slugify');
 
 // 1. Read JSON Data File
 const getProductJSONPath = process.cwd() + '/dev-data/data.json';
-const productsJSONObj = fs.readFileSync(
-  getProductJSONPath,
-  'utf-8',
-  (err, data) => {
-    if (err) return console.log('ERROR! 💢💢💢 Product JSON file not found!');
-  }
-);
+const productsJSONObj = fs.readFileSync(getProductJSONPath, 'utf-8', (err, data) => {
+  if (err) return console.log('ERROR! 💢💢💢 Product JSON file not found!');
+});
 const productDataObject = JSON.parse(productsJSONObj);
 
 // 2. Read static templates
 const getTemplateOverviewPath = `${__dirname}/template-overview.html`;
-const templateOverview = fs.readFileSync(
-  getTemplateOverviewPath,
-  'utf-8',
-  (err, data) => {
-    if (err)
-      return console.log(
-        'ERROR! 💢💢💢 template-overview.html file not found!'
-      );
-  }
-);
+const templateOverview = fs.readFileSync(getTemplateOverviewPath, 'utf-8', (err, data) => {
+  if (err) return console.log('ERROR! 💢💢💢 template-overview.html file not found!');
+});
 
 const getTemplateProdPath = `${__dirname}/template-product.html`;
-const templateProduct = fs.readFileSync(
-  getTemplateProdPath,
-  'utf-8',
-  (err, data) => {
-    if (err)
-      return console.log(
-        'ERROR! 💢💢💢 template-product.html JSON file not found!'
-      );
-  }
-);
+const templateProduct = fs.readFileSync(getTemplateProdPath, 'utf-8', (err, data) => {
+  if (err) return console.log('ERROR! 💢💢💢 template-product.html JSON file not found!');
+});
 
 const getTemplateCardPath = `${__dirname}/template-card.html`;
-const templateCard = fs.readFileSync(
-  getTemplateCardPath,
-  'utf-8',
-  (err, data) => {
-    if (err)
-      return console.log(
-        'ERROR! 💢💢💢 template-card.html JSON file not found!'
-      );
-  }
-);
+const templateCard = fs.readFileSync(getTemplateCardPath, 'utf-8', (err, data) => {
+  if (err) return console.log('ERROR! 💢💢💢 template-card.html JSON file not found!');
+});
 
 // 3. replaceTemplate function
 const replaceTemplate = (template, product) => {
@@ -77,9 +52,7 @@ const replaceTemplate = (template, product) => {
 };
 
 // Create slugs for slugify module to replace product ID
-const slugs = productDataObject.map((el) =>
-  slugify(el.productName, { lower: true })
-);
+const slugs = productDataObject.map((el) => slugify(el.productName, { lower: true }));
 console.log(slugs);
 
 // END TOP-LEVEL CODE
@@ -97,9 +70,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-type': 'text/html' });
 
     // The last join will make turn the array into a string.
-    const cardsHTML = productDataObject
-      .map((element) => replaceTemplate(templateCard, element))
-      .join('');
+    const cardsHTML = productDataObject.map((element) => replaceTemplate(templateCard, element)).join('');
 
     // Replace templateOverview placeholder {%PRODUCT_CARDS%} with cardsHTML
     const output = templateOverview.replace('{%PRODUCT_CARDS%}', cardsHTML);
